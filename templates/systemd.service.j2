@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=Renew LE certificates
+
+[Service]
+ExecStart=/bin/certbot renew
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

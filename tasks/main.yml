@@ -1,0 +1,41 @@
+---
+
+- name: Install package
+  become: True
+  package:
+    name: python3-certbot-dns-eth
+    state: present
+
+- name: Configure package
+  become: True
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - src: certbot-eth.ini.j2
+      dest: /etc/letsencrypt/eth-dns.ini
+    - src: systemd.service.j2
+      dest: /etc/systemd/system/certbot.service
+    - src: systemd.timer.j2
+      dest: /etc/systemd/system/certbot.timer
+
+- name: Request certificates
+  become: True
+  command: >
+    certbot certonly
+    -a certbot-dns-eth-api:dns-eth-api
+    --certbot-dns-eth-api:dns-eth-api-credentials
+    /etc/letsencrypt/eth-dns.ini
+    --test-cert
+    -d "{{ item }}"
+  with_items: "{{ certbot_eth_domains }}"
+
+- name: Enable automatic renewal
+  become: True
+  service:
+    name: certbot.timer
+    state: started
+    enabled: True
