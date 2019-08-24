@@ -2,9 +2,10 @@
 
 - name: Install package
   become: True
-  package:
-    name: python3-certbot-dns-eth
+  apt:
+    name: ['python3-protobuf', 'python3-certbot-dns-eth']
     state: present
+    default_release: stretch-backports
 
 - name: Configure package
   become: True
@@ -13,14 +14,17 @@
     dest: "{{ item.dest }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "{{ item.mode }}"
   with_items:
     - src: certbot-eth.ini.j2
       dest: /etc/letsencrypt/eth-dns.ini
+      mode: "0600"
     - src: systemd.service.j2
       dest: /etc/systemd/system/certbot.service
+      mode: "0420"
     - src: systemd.timer.j2
       dest: /etc/systemd/system/certbot.timer
+      mode: "0420"
 
 - name: Request certificates
   become: True
