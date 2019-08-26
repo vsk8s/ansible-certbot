@@ -1,0 +1,58 @@
+#!/bin/bash
+# {{ ansible_managed }}
+
+set -o pipefail
+
+log() {
+    echo "script: $1"
+}
+
+
+check_error() {
+    if [[ $1 -ne 0 ]] ; then
+        log "Error in $2"
+        exit 1
+    fi
+}
+
+LE_BASE="/etc/letsencrypt/live"
+
+DOMAINS=(
+{% for domain in certbot_eth_domains %}
+    '{{ domain }}'
+{% endfor %}
+)
+
+for DOMAIN in "${DOMAINS[@]}" ; do
+    log "Working on $DOMAIN"
+
+    URL="$(openssl x509 -in "$LE_BASE/$DOMAIN/cert.pem" -ocsp_uri -noout)"
+
+    if [[ $? -ne 0 ]] ; then
+        log "No OCSP URL found, skipping"
+        continue
+    fi
+
+    ISSUER="$LE_BASE/$DOMAIN/chain.pem"
+    CERT="$LE_BASE/$DOMAIN/cert.pem"
+    KEY="$LE_BASE/$DOMAIN/key.pem"
+    CHAIN="$LE_BASE/$DOMAIN/chain.pem"
+    OUT="/etc/k8router/certs/$DOMAIN"
+
+    rm -rf "$OUT/ocsp.ocsp"
+
+    log "Requesting OCSP at $URL"
+
+    timeout -k 2h 1h openssl ocsp                                           \
+            -issuer "$ISSUER"                                               \
+            -cert "$CERT"                                                   \
+            -respout "$OUT/ocsp.ocsp"                                       \
+            -url "$URL"
+
+    check_error $? "OCSP Request"
+
+    cat "$CERT" "$CHAIN" "$KEY" > "$OUT/combined.pem"
+done
+
+systemctl reload haproxy
+
