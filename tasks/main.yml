@@ -37,9 +37,22 @@
     -a certbot-dns-eth-api:dns-eth-api
     --certbot-dns-eth-api:dns-eth-api-credentials
     /etc/letsencrypt/eth-dns.ini
+    --certbot-dns-eth-api:dns-eth-api-propagation-seconds
+    30
     --test-cert
-    -d "{{ item }}"
+    -m {{ certbot_eth_email }}
+    --agree-tos
+    --keep
+    {% for domain in item.domains %}
+    -d '{{ domain }}'
+    {% endfor %}
   with_items: "{{ certbot_eth_domains }}"
+
+- name: Run cert-assembler
+  become: True
+  service:
+    name: certbot.service
+    state: started
 
 - name: Enable automatic renewal
   become: True

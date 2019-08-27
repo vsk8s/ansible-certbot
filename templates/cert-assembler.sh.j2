@@ -19,7 +19,7 @@ LE_BASE="/etc/letsencrypt/live"
 
 DOMAINS=(
 {% for domain in certbot_eth_domains %}
-    '{{ domain }}'
+    '{{ domain.name }}'
 {% endfor %}
 )
 
@@ -35,10 +35,11 @@ for DOMAIN in "${DOMAINS[@]}" ; do
 
     ISSUER="$LE_BASE/$DOMAIN/chain.pem"
     CERT="$LE_BASE/$DOMAIN/cert.pem"
-    KEY="$LE_BASE/$DOMAIN/key.pem"
+    KEY="$LE_BASE/$DOMAIN/privkey.pem"
     CHAIN="$LE_BASE/$DOMAIN/chain.pem"
     OUT="/etc/k8router/certs/$DOMAIN"
 
+    mkdir -p "$OUT"
     rm -rf "$OUT/ocsp.ocsp"
 
     log "Requesting OCSP at $URL"
