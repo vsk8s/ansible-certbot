@@ -40,7 +40,11 @@
     --certbot-dns-eth-api:dns-eth-api-propagation-seconds
     30
     --test-cert
+    {% if certbot_eth_email == "" %}
+    --register-unsafely-without-email
+    {% else %}
     -m {{ certbot_eth_email }}
+    {% endif %}
     --agree-tos
     --keep
     {% for domain in item.domains %}

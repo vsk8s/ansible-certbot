@@ -4,7 +4,7 @@ certbot_eth_key: /etc/certbot/key.pem
 certbot_eth_cert: /etc/certbot/cert.pem
 
 certbot_eth_periodicity: "*-*-* 07,19:00:00" # twice a day
-certbot_eth_email: "test@sos.ethz.ch"
+certbot_eth_email: ""
 certbot_eth_domains: []
 # - name: "domain.example"
 #   domains:
