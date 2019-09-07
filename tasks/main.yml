@@ -3,9 +3,8 @@
 - name: Install package
   become: True
   apt:
-    name: ['python3-protobuf', 'python3-certbot-dns-eth']
+    name: "python3-certbot-dns-eth"
     state: present
-    default_release: stretch-backports
 
 - name: Configure package
   become: True
