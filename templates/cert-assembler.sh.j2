@@ -55,5 +55,5 @@ for DOMAIN in "${DOMAINS[@]}" ; do
     cat "$CERT" "$CHAIN" "$KEY" > "$OUT/combined.pem"
 done
 
-systemctl reload haproxy
+systemctl reload haproxy || true
 
