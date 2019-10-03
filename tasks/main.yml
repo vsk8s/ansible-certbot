@@ -50,6 +50,9 @@
     {% endfor %}
   with_items: "{{ certbot_eth_domains }}"
 
+- name: Flush handlers
+  meta: flush_handlers
+
 - name: Run cert-assembler
   become: True
   service:
