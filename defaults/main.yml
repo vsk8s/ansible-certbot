@@ -2,6 +2,7 @@ certbot_eth_api: localhost:50051
 certbot_eth_ca: /etc/certbot/ca.pem
 certbot_eth_key: /etc/certbot/key.pem
 certbot_eth_cert: /etc/certbot/cert.pem
+certbot_eth_generate_test_certificates: True
 
 certbot_eth_periodicity: "*-*-* 07,19:00:00" # twice a day
 certbot_eth_email: ""
