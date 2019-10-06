@@ -1,12 +1,21 @@
+certbot_generate_test_certificates: True
+certbot_periodicity: "*-*-* 07,19:00:00" # twice a day
+certbot_email: ""
+
+# keys only needed if domains are configured
 certbot_eth_api: localhost:50051
 certbot_eth_ca: /etc/certbot/ca.pem
 certbot_eth_key: /etc/certbot/key.pem
 certbot_eth_cert: /etc/certbot/cert.pem
-certbot_eth_generate_test_certificates: True
-
-certbot_eth_periodicity: "*-*-* 07,19:00:00" # twice a day
-certbot_eth_email: ""
 certbot_eth_domains: []
 # - name: "domain.example"
 #   domains:
 #     - "*.domain.example"
+
+# keys only needed if domains are configured
+certbot_gandi_api_key: changeme
+certbot_gandi_domains: []
+# - name: "domain.example"
+#   domains:
+#     - "*.domain.example"
+

@@ -1,0 +1,40 @@
+---
+
+- name: Install package
+  become: True
+  apt:
+    name: "{{ certbot_package }}"
+    state: present
+
+- name: Configure package
+  become: True
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  with_items:
+    - src: "{{ certbot_config }}.j2"
+      dest: "/etc/certbot/{{ certbot_config }}"
+      mode: "0600"
+
+- name: Request certificates
+  become: True
+  command: >
+    certbot certonly
+    {{ certbot_flags }}
+    {% if certbot_generate_test_certificates %}
+    --test-cert
+    {% endif %}
+    {% if certbot_email == "" %}
+    --register-unsafely-without-email
+    {% else %}
+    -m {{ certbot_email }}
+    {% endif %}
+    --agree-tos
+    --keep
+    {% for domain in item.domains %}
+    -d '{{ domain }}'
+    {% endfor %}
+  with_items: "{{ certbot_domains }}"

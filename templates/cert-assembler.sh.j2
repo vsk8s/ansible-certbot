@@ -18,7 +18,7 @@ check_error() {
 LE_BASE="/etc/letsencrypt/live"
 
 DOMAINS=(
-{% for domain in certbot_eth_domains %}
+{% for domain in (certbot_eth_domains + certbot_gandi_domains) %}
     '{{ domain.name }}'
 {% endfor %}
 )

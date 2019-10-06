@@ -1,11 +1,5 @@
 ---
 
-- name: Install package
-  become: True
-  apt:
-    name: "python3-certbot-dns-eth"
-    state: present
-
 - name: Configure package
   become: True
   template:
@@ -15,9 +9,6 @@
     group: root
     mode: "{{ item.mode }}"
   with_items:
-    - src: certbot-eth.ini.j2
-      dest: /etc/letsencrypt/eth-dns.ini
-      mode: "0600"
     - src: systemd.service.j2
       dest: /etc/systemd/system/certbot.service
       mode: "0420"
@@ -29,29 +20,30 @@
       mode: "0744"
   notify: Reload systemd
 
-- name: Request certificates
-  become: True
-  command: >
-    certbot certonly
-    -a certbot-dns-eth-api:dns-eth-api
-    --certbot-dns-eth-api:dns-eth-api-credentials
-    /etc/letsencrypt/eth-dns.ini
-    --certbot-dns-eth-api:dns-eth-api-propagation-seconds
-    30
-    {% if certbot_eth_generate_test_certificates %}
-    --test-cert
-    {% endif %}
-    {% if certbot_eth_email == "" %}
-    --register-unsafely-without-email
-    {% else %}
-    -m {{ certbot_eth_email }}
-    {% endif %}
-    --agree-tos
-    --keep
-    {% for domain in item.domains %}
-    -d '{{ domain }}'
-    {% endfor %}
-  with_items: "{{ certbot_eth_domains }}"
+- name: Configure ETH
+  include_tasks: dns-provider.yml
+  vars:
+    certbot_package: python3-certbot-dns-eth
+    certbot_config: eth.ini
+    certbot_domains: "{{ certbot_eth_domains }}"
+    certbot_flags: >
+      -a certbot-dns-eth-api:dns-eth-api
+      --certbot-dns-eth-api:dns-eth-api-credentials
+      /etc/letsencrypt/eth-dns.ini
+      --certbot-dns-eth-api:dns-eth-api-propagation-seconds
+      30
+  when: certbot_eth_domains != []
+
+- name: Configure Gandi
+  include_tasks: dns-provider.yml
+  vars:
+    certbot_package: python3-certbot-gandi
+    certbot_config: gandi.ini
+    certbot_domains: "{{ certbot_gandi_domains }}"
+    certbot_flags: >
+      -a certbot-plugin-gandi:dns
+      --certbot-plugin-gandi:dns-credentials /etc/certbot/gandi.ini
+  when: certbot_gandi_domains != []
 
 - name: Flush handlers
   meta: flush_handlers
