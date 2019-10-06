@@ -29,7 +29,7 @@
     certbot_flags: >
       -a certbot-dns-eth-api:dns-eth-api
       --certbot-dns-eth-api:dns-eth-api-credentials
-      /etc/letsencrypt/eth-dns.ini
+      /etc/certbot/eth.ini
       --certbot-dns-eth-api:dns-eth-api-propagation-seconds
       30
   when: certbot_eth_domains != []
