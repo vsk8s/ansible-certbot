@@ -48,7 +48,7 @@
 - name: Flush handlers
   meta: flush_handlers
 
-- name: Run cert-assembler
+- name: Start certbot
   become: True
   service:
     name: certbot.service
