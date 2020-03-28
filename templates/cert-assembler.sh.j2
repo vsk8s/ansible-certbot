@@ -37,7 +37,7 @@ for DOMAIN in "${DOMAINS[@]}" ; do
     CERT="$LE_BASE/$DOMAIN/cert.pem"
     KEY="$LE_BASE/$DOMAIN/privkey.pem"
     CHAIN="$LE_BASE/$DOMAIN/chain.pem"
-    OUT="/etc/k8router/certs/$DOMAIN"
+    OUT="{{ certbot_out_dir }}/$DOMAIN"
 
     mkdir -p "$OUT"
     rm -rf "$OUT/ocsp.ocsp"

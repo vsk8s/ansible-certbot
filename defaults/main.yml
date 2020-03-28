@@ -19,3 +19,5 @@ certbot_gandi_domains: []
 #   domains:
 #     - "*.domain.example"
 
+# Destination directory for cert-assembler
+certbot_out_dir: changeme
