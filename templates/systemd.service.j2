@@ -5,7 +5,9 @@ Description=Renew LE certificates
 
 [Service]
 ExecStart=/usr/bin/certbot renew
-ExecStartPost=/etc/certbot/cert-assembler.sh
+{% for execstartpost_task in certbot_execstartpost_tasks %}
+ExecStartPost={{ execstartpost_task }}
+{% endfor %}
 Type=oneshot
 
 [Install]
