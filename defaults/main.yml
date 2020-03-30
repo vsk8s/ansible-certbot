@@ -19,3 +19,8 @@ certbot_gandi_domains: []
 #   domains:
 #     - "*.domain.example"
 
+# Destination directory for cert-assembler
+certbot_out_dir: /etc/k8router/certs
+
+certbot_execstartpost_tasks:
+  - /etc/certbot/cert-assembler.sh
